@@ -1,29 +1,22 @@
-import os
-from pathlib import Path
-
 from fastapi.testclient import TestClient
 
+from backend.app import app
 
-def test_health_endpoint(tmp_path: Path) -> None:
-    db_path = tmp_path / "test.db"
-    os.environ["BACKEND_DB_PATH"] = str(db_path)
 
-    from backend.app import app
+client = TestClient(app)
 
-    client = TestClient(app)
+
+def setup_function() -> None:
+    client.post('/dev/reset')
+
+
+def test_health_endpoint() -> None:
     response = client.get('/health')
     assert response.status_code == 200
     assert response.json() == {'status': 'ok'}
 
 
-def test_create_and_fetch_latest_reading(tmp_path: Path) -> None:
-    db_path = tmp_path / "test.db"
-    os.environ["BACKEND_DB_PATH"] = str(db_path)
-
-    from backend.app import app
-
-    client = TestClient(app)
-
+def test_create_and_fetch_latest_reading() -> None:
     payload = {
         'device_id': 'esp32-lab-01',
         'temperature_c': 24.6,
@@ -41,14 +34,7 @@ def test_create_and_fetch_latest_reading(tmp_path: Path) -> None:
     assert latest.json()['device_id'] == payload['device_id']
 
 
-def test_list_readings_limit(tmp_path: Path) -> None:
-    db_path = tmp_path / "test.db"
-    os.environ["BACKEND_DB_PATH"] = str(db_path)
-
-    from backend.app import app
-
-    client = TestClient(app)
-
+def test_list_readings_limit() -> None:
     for idx in range(3):
         payload = {
             'device_id': f'esp32-{idx}',

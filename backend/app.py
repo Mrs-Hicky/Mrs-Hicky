@@ -1,10 +1,8 @@
-import os
 from datetime import datetime
+from typing import List
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-
-from backend.store import SQLiteStore
 
 app = FastAPI(title="IoT Backend Starter")
 
@@ -20,9 +18,7 @@ class Reading(ReadingIn):
     id: int
 
 
-def get_store() -> SQLiteStore:
-    db_path = os.getenv("BACKEND_DB_PATH", "backend/data/readings.db")
-    return SQLiteStore(db_path=db_path)
+READINGS: List[Reading] = []
 
 
 @app.get("/health")
@@ -31,28 +27,28 @@ def health() -> dict[str, str]:
 
 
 @app.post("/readings", response_model=Reading, status_code=201)
-def create_reading(payload: ReadingIn, store: SQLiteStore = Depends(get_store)) -> Reading:
-    created = store.add_reading(**payload.model_dump())
-    return Reading(**created.__dict__)
+def create_reading(payload: ReadingIn) -> Reading:
+    reading = Reading(id=len(READINGS) + 1, **payload.model_dump())
+    READINGS.append(reading)
+    return reading
 
 
 @app.get("/readings/latest", response_model=Reading)
-def latest_reading(store: SQLiteStore = Depends(get_store)) -> Reading:
-    latest = store.latest_reading()
-    if latest is None:
+def latest_reading() -> Reading:
+    if not READINGS:
         raise HTTPException(status_code=404, detail="No readings available")
-    return Reading(**latest.__dict__)
+    return max(READINGS, key=lambda item: item.timestamp)
 
 
 @app.get("/readings", response_model=list[Reading])
-def list_readings(limit: int = 50, store: SQLiteStore = Depends(get_store)) -> list[Reading]:
+def list_readings(limit: int = 50) -> list[Reading]:
     if limit < 1:
         raise HTTPException(status_code=400, detail="limit must be >= 1")
-    readings = store.list_readings(limit=limit)
-    return [Reading(**item.__dict__) for item in readings]
+    return READINGS[-limit:]
 
 
 @app.post("/dev/reset", status_code=204)
-def reset_for_tests(store: SQLiteStore = Depends(get_store)) -> None:
+def reset_for_tests() -> None:
     """Utility endpoint for local demos/tests."""
-    store.clear()
+    READINGS.clear()
+

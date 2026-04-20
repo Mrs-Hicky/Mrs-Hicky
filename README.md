@@ -74,7 +74,7 @@ Start with a **temperature logger**:
 
 ## Current implementation status
 
-- ✅ Backend starter service is implemented under `backend/` with FastAPI, SQLite persistence, and pytest coverage.
+- ✅ Backend starter service is now implemented under `backend/` with FastAPI and pytest coverage.
 - 🔜 Firmware and dashboard are still documentation-first stubs and should be implemented next.
 
 ## Contribution expectations
