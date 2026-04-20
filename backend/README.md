@@ -1,24 +1,14 @@
 # Backend module
 
-This folder contains a minimal FastAPI service that receives and stores telemetry in memory.
+This folder contains the API service that receives and stores telemetry.
 
-## Implemented endpoints
+## Recommended first milestone
 
-- `GET /health` → basic health check
-- `POST /readings` → ingest one reading
-- `GET /readings/latest` → fetch most recent reading by timestamp
-- `GET /readings?limit=50` → list recent readings
+- Create `POST /readings` endpoint.
+- Validate payload shape and required fields.
+- Store data in memory first, then move to SQLite.
 
-## Local setup
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r backend/requirements.txt
-uvicorn backend.app:app --reload
-```
-
-## Example payload
+## Suggested payload
 
 ```json
 {
@@ -39,3 +29,6 @@ pytest backend/tests -q
 
 - Storage is currently in-memory for simplicity.
 - Next step: move storage to SQLite and add persistence tests.
+## Suggested next step
+
+Add `GET /readings/latest` and `GET /readings?limit=50`.
