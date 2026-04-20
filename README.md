@@ -72,6 +72,11 @@ Start with a **temperature logger**:
 - [ ] Implement one POST endpoint to ingest data.
 - [ ] Document local setup and run commands.
 
+## Current implementation status
+
+- ✅ Backend starter service is now implemented under `backend/` with FastAPI and pytest coverage.
+- 🔜 Firmware and dashboard are still documentation-first stubs and should be implemented next.
+
 ## Contribution expectations
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for coding, testing, and PR guidance.

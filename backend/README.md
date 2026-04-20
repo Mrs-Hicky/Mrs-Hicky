@@ -19,6 +19,16 @@ This folder contains the API service that receives and stores telemetry.
 }
 ```
 
+## Run tests
+
+```bash
+pytest backend/tests -q
+```
+
+## Notes
+
+- Storage is currently in-memory for simplicity.
+- Next step: move storage to SQLite and add persistence tests.
 ## Suggested next step
 
 Add `GET /readings/latest` and `GET /readings?limit=50`.
